@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class TaskService {
         taskDTO.setTitle(task.getTitle());
         taskDTO.setDescription((task.getDescription()));
         taskDTO.setStatus(task.getStatus());
+        taskDTO.setCreatedAt(task.getCreatedAt());
+        taskDTO.setUpdatedAt(task.getUpdatedAt());
 
         return taskDTO;
     }
@@ -36,6 +39,9 @@ public class TaskService {
         task.setStatus(taskDTO.getStatus());
         task.setDescription(taskDTO.getDescription());
         task.setTitle(taskDTO.getTitle());
+        task.setCreatedAt(taskDTO.getCreatedAt());
+        task.setUpdatedAt(taskDTO.getUpdatedAt());
+
 
         return task;
     }
@@ -43,14 +49,15 @@ public class TaskService {
 
     public TaskDTO saveTask(TaskDTO  taskDTO)
     {
-
+        taskDTO.setCreatedAt(LocalDateTime.now());
+        taskDTO.setUpdatedAt(LocalDateTime.now());
        Task saved=taskRepo.save(mapDTOToEntity(taskDTO));
 
 
         return  mapEntityToDTO(saved);
     }
 
-    public List<TaskDTO> getAllTask()
+    public List<TaskDTO> getAllTasks()
     {
 
         return taskRepo.findAll().stream().map(this::mapEntityToDTO).toList();
@@ -58,7 +65,7 @@ public class TaskService {
 
     public TaskDTO  getTaskById(long id)
     {
-        Task found =taskRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("This Task is not found"));
+        Task found =taskRepo.findById(id).orElse(null);
         return mapEntityToDTO(found);
     }
 
@@ -66,7 +73,7 @@ public class TaskService {
     {
         Task newTask=taskRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("This Task is not found"));
 
-
+            newTask.setUpdatedAt(LocalDateTime.now());
             newTask.setTitle(taskDTO.getTitle());
             newTask.setDescription(taskDTO.getDescription());
             newTask.setStatus(taskDTO.getStatus());
