@@ -5,8 +5,12 @@ import com.preparation.prep.entity.Task;
 import com.preparation.prep.exception.ResourceNotFoundException;
 import com.preparation.prep.repository.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,10 +61,12 @@ public class TaskService {
         return  mapEntityToDTO(saved);
     }
 
-    public List<TaskDTO> getAllTasks()
+    public Page<TaskDTO> getAllTasks(int page, int size)
     {
+        Pageable pageable= PageRequest.of(page, size);
+        Page<Task>taskPage=taskRepo.findAll(pageable);
 
-        return taskRepo.findAll().stream().map(this::mapEntityToDTO).toList();
+        return taskPage.map(this::mapEntityToDTO);
     }
 
     public TaskDTO  getTaskById(long id)

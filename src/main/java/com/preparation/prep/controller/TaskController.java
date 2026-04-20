@@ -5,6 +5,8 @@ import com.preparation.prep.response.APIResponseWrapper;
 import com.preparation.prep.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ public class TaskController {
 
 
 
+
     @PostMapping()
     public ResponseEntity<APIResponseWrapper<TaskDTO>> saveTask(@Valid @RequestBody TaskDTO taskDTO)
     {
@@ -32,10 +35,10 @@ public class TaskController {
     }
 
     @GetMapping()
-    public ResponseEntity<APIResponseWrapper<List<TaskDTO>>> getAllTasks()
+    public ResponseEntity<APIResponseWrapper<Page<TaskDTO>>> getAllTasks(@RequestParam(defaultValue = "0") int page, @RequestParam (defaultValue = "3")int size)
     {
-        List <TaskDTO> allTasksList=taskService.getAllTasks();
-        APIResponseWrapper<List<TaskDTO>>response=new APIResponseWrapper<>("Successfully fetched all the tasks",allTasksList,true );
+        Page <TaskDTO> allTasksList=taskService.getAllTasks(page, size);
+        APIResponseWrapper<Page<TaskDTO>>response=new APIResponseWrapper<>("Successfully fetched all the tasks",allTasksList,true );
         return ResponseEntity.ok(response);
     }
 
