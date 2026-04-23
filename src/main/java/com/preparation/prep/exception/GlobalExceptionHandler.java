@@ -16,4 +16,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(ex.getMessage());
     }
 
+    @ExceptionHandler
+    public ResponseEntity<String> handleDuplicates(DuplicateResourceException ex)
+    {
+        return ResponseEntity.status(500).body(ex.getMessage());
+    }
+
+
 }
+
+

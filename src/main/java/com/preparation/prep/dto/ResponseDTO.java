@@ -9,4 +9,6 @@ public class ResponseDTO {
     private String username;
     private  String name;
 
+    private boolean isValidUser=true;
+
 }

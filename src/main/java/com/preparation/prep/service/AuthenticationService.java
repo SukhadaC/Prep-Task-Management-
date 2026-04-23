@@ -5,8 +5,9 @@ import com.preparation.prep.dto.LoginRequestDTO;
 import com.preparation.prep.dto.ResponseDTO;
 import com.preparation.prep.dto.SignUpRequestDTO;
 import com.preparation.prep.entity.TaskUser;
+import com.preparation.prep.exception.DuplicateResourceException;
+import com.preparation.prep.exception.ResourceNotFoundException;
 import com.preparation.prep.repository.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,6 @@ public class AuthenticationService {
 
         user.setName(requestDTOt.getName());
         user.setEmail(requestDTOt.getEmail());
-        user.setPassword(requestDTOt.getPassword());
         user.setUsername(requestDTOt.getUsername());
 
         return user;
@@ -55,13 +55,15 @@ public class AuthenticationService {
 
         String  hashedPassword=passwordEncoder.encode(requestDTO.getPassword());
 
+        //Checking for duplicates
+        if(userRepository.findByUsername(requestDTO.getUsername())!=null)
+            throw new DuplicateResourceException("This user already exists");
+
         TaskUser taskUser=mapSignUpDTOtoUser(requestDTO);
+
         taskUser.setPassword(hashedPassword);
 
         userRepository.save(taskUser);
-
-
-
 
         return mapUserToResponseDTO(taskUser);
     }
@@ -69,13 +71,15 @@ public class AuthenticationService {
     public ResponseDTO loginUser(LoginRequestDTO loginRequestDTO)
     {
         TaskUser taskUser =userRepository.findByUsername(loginRequestDTO.getUsername());
+        if(taskUser ==null)
+            throw new RuntimeException("Invalid Credentials");
         ResponseDTO responseDTO=mapUserToResponseDTO(taskUser);
-        if(passwordEncoder.matches(loginRequestDTO.getPassword(), taskUser.getPassword()))
+        if(!passwordEncoder.matches(loginRequestDTO.getPassword(), taskUser.getPassword()))
         {
-            return responseDTO;
+            throw new RuntimeException("Invalid User");
         }
 
-        return null;
+        return responseDTO;
     }
 
 
