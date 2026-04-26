@@ -8,6 +8,7 @@ import com.preparation.prep.entity.TaskUser;
 import com.preparation.prep.exception.DuplicateResourceException;
 import com.preparation.prep.exception.ResourceNotFoundException;
 import com.preparation.prep.repository.UserRepository;
+import com.preparation.prep.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,10 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+
+
+
     public ResponseDTO createUser(SignUpRequestDTO requestDTO)
     {
 
@@ -68,18 +73,19 @@ public class AuthenticationService {
         return mapUserToResponseDTO(taskUser);
     }
 
-    public ResponseDTO loginUser(LoginRequestDTO loginRequestDTO)
+    public String  loginUser(LoginRequestDTO loginRequestDTO)
     {
         TaskUser taskUser =userRepository.findByUsername(loginRequestDTO.getUsername());
-        if(taskUser ==null)
-            throw new RuntimeException("Invalid Credentials");
-        ResponseDTO responseDTO=mapUserToResponseDTO(taskUser);
-        if(!passwordEncoder.matches(loginRequestDTO.getPassword(), taskUser.getPassword()))
+
+
+        if(taskUser==null|| !passwordEncoder.matches(loginRequestDTO.getPassword(), taskUser.getPassword()))
         {
-            throw new RuntimeException("Invalid User");
+            throw new RuntimeException("Invalid Credentials");
         }
 
-        return responseDTO;
+
+
+        return jwtUtil.generateToken(loginRequestDTO.getUsername());
     }
 
 

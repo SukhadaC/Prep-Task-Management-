@@ -22,6 +22,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(500).body(ex.getMessage());
     }
 
+    @ExceptionHandler
+    public ResponseEntity<String> handleTokenExpiration(ExpiredTokenException ex)
+    {
+        return ResponseEntity.status(401).body(ex.getMessage());
+    }
+
+
 
 }
 
