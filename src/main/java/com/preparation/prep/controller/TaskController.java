@@ -35,10 +35,10 @@ public class TaskController {
     }
 
     @GetMapping()
-    public ResponseEntity<APIResponseWrapper<Page<TaskDTO>>> getAllTasks(@RequestParam(defaultValue = "0") int page, @RequestParam (defaultValue = "3")int size)
+    public ResponseEntity<APIResponseWrapper<List<TaskDTO>>> getAllTasks()
     {
-        Page <TaskDTO> allTasksList=taskService.getAllTasks(page, size);
-        APIResponseWrapper<Page<TaskDTO>>response=new APIResponseWrapper<>("Successfully fetched all the tasks",allTasksList,true );
+        List <TaskDTO> allTasksList=taskService.getAllTasks();
+        APIResponseWrapper<List<TaskDTO>>response=new APIResponseWrapper<>("Successfully fetched all the tasks",allTasksList,true );
         return ResponseEntity.ok(response);
     }
 
