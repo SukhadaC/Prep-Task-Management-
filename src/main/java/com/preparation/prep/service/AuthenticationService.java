@@ -51,6 +51,9 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JWTUtil jwtUtil;
+
 
 
 

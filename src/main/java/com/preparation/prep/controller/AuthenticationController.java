@@ -26,18 +26,7 @@ public class AuthenticationController {
 @GetMapping("/validateToken")
 public String test(@RequestHeader("Authorization") String header)
 {
-    if (header==null||!header.startsWith("Bearer"))
-        throw new RuntimeException("Invalid or missing Authorizaton header");
-
-
-    String token=header.substring(7);
-
-    String username =jwtUtil.extractUsername(token);
-
-
-    if (!jwtUtil.isTokenValid(token,username))
-        throw  new ExpiredTokenException("Token is invalid");
-    return "UserName:"+username;
+    return "some response";
 }
 
 
